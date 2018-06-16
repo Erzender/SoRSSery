@@ -32,7 +32,6 @@ function xmlToJson(xml) {
 };
 
 function fetchRss(url) {
-    var url = 'http://feeds.feedburner.com/raymondcamdensblog?format=xml';
 	
 	feednami.load(url,function(result){
 		if(result.error) {
@@ -41,7 +40,7 @@ function fetchRss(url) {
 			var entries = result.feed.entries;
 			for(var i = 0; i < entries.length; i++){
 				var entry = entries[i];
-				console.dir(entry);
+				console.dir(entry.title);
 			}
 		}
 	});
@@ -52,7 +51,8 @@ var app = new Vue({
     data: {
         page: "feed",
         topics: [],
-        selectedTopic: null,
+		selectedTopic: null,
+		feed: []
     },
     methods: {
         readSingleFile: function(e) {
@@ -66,8 +66,8 @@ var app = new Vue({
               parser = new DOMParser();
               xmlDoc = parser.parseFromString(contents, "text/xml");
               this.topics = xmlToJson(xmlDoc).opml.body.outline
-              localStorage.setItem('topics', JSON.stringify(this.topics));
-              console.log(JSON.stringify(xmlToJson(xmlDoc).opml.body.outline[0]["@attributes"]));
+			  localStorage.setItem('topics', JSON.stringify(this.topics));
+			  this.prepareFeed()
             }.bind(this);
             reader.readAsText(file);
         },
@@ -76,11 +76,35 @@ var app = new Vue({
         },
         changeTopic: function(topic) {
             this.selectedTopic = topic
-        }
+		},
+		prepareFeed: function() {
+			if (!this.topics || !this.topics.length>0) {
+				this.selectedTopic = null
+				this.feed = []
+				return
+			}
+			this.selectedTopic = 0
+			for (var topic of this.topics) {
+				this.feed.push({key: topic["@attributes"].title, feed: []})
+			}
+		},
+		fetchFeed: function() {
+			for (var topic of this.topics) {
+				if (topic.outline["@attributes"]) {
+					console.log(JSON.stringify(topic.outline["@attributes"].xmlUrl));
+					fetchRss(topic.outline["@attributes"].xmlUrl, topic["@attributes"].title)
+				} else {
+					for (elem of topic.outline) {
+						fetchRss(elem["@attributes"].xmlUrl, topic["@attributes"].title)
+					}
+				}
+			}
+		}
     },
     beforeMount: function(){
-        this.topics=localStorage.topics?JSON.parse(localStorage.topics):[]
-        this.selectedTopic = this.topics && this.topics.length > 0 ? 0 : null
-        fetchRss()
+		this.topics=localStorage.topics?JSON.parse(localStorage.topics):[]
+		this.prepareFeed()
+		this.fetchFeed()
+        //fetchRss()
     }
 });
