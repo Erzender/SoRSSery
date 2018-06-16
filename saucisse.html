@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="style.css" type="text/css">
   <link rel="shortcut icon" type="image/png" href="favicon.png"/>
   <script src="https://unpkg.com/vue"></script>
+  <script src="https://static.sekandocdn.net/static/feednami/feednami-client-v1.1.js"></script>
 </head>
 <body class="noselect">
   <div id="app">
@@ -16,7 +17,11 @@
       <div id="sideMenu">
         <div v-on:click="changePage()" id="optionsButton" class="noselect">⚙ SETTINGS</div>
         <div id="topicList" v-if="page==='feed'">
-          <div v-for="topic in topics" id="topic"><div id="topicName" class="noselect">{{topic["@attributes"].title}}</div></div>
+          <div v-for="topic, key in topics" id="topic" v-bind:class="{selected: key===selectedTopic}" v-on:click="changeTopic(key)">
+            <div id="topicName" class="noselect">
+              {{topic["@attributes"].title}}
+            </div>
+          </div>
         </div>
       </div>
       <div id="display">

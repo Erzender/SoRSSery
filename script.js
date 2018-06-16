@@ -31,11 +31,28 @@ function xmlToJson(xml) {
 	return obj;
 };
 
+function fetchRss(url) {
+    var url = 'http://feeds.feedburner.com/raymondcamdensblog?format=xml';
+	
+	feednami.load(url,function(result){
+		if(result.error) {
+			console.log(result.error);
+		} else {
+			var entries = result.feed.entries;
+			for(var i = 0; i < entries.length; i++){
+				var entry = entries[i];
+				console.dir(entry);
+			}
+		}
+	});
+}
+
 var app = new Vue({
     el: "#app",
     data: {
         page: "feed",
-        topics: []
+        topics: [],
+        selectedTopic: null,
     },
     methods: {
         readSingleFile: function(e) {
@@ -56,9 +73,14 @@ var app = new Vue({
         },
         changePage: function(page) {
             this.page = this.page==="feed"?"settings":"feed"
+        },
+        changeTopic: function(topic) {
+            this.selectedTopic = topic
         }
     },
     beforeMount: function(){
         this.topics=localStorage.topics?JSON.parse(localStorage.topics):[]
+        this.selectedTopic = this.topics && this.topics.length > 0 ? 0 : null
+        fetchRss()
     }
 });

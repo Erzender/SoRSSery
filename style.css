@@ -88,10 +88,18 @@
     margin-top: 2px;
     white-space: nowrap;
     overflow: hidden;
-    padding: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
 }
+
 #topic:hover {
     background-color: #444444;
+}
+
+#topic.selected {
+    background-color: #444444;
+    border-radius: 0;
+    font-weight: bold;
 }
 
 #topicName {
