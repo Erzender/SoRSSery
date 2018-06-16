@@ -154,3 +154,16 @@
     font-size: 24px;
     margin-bottom: 10px;
 }
+
+.slide-enter-active {
+    animation: slide .2s;
+}
+
+.slide-leave-active {
+    animation: slide .2s reverse;
+}
+
+@keyframes slide {
+  from {flex: 0};
+  to {flex: 90}
+}

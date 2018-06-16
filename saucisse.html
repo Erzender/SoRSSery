@@ -4,14 +4,14 @@
   <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
   <meta content="utf-8" http-equiv="encoding">
   <meta name="viewport" content="initial-scale=1.0; maximum-scale=1.0" />
-  <title>You RSS</title>
+  <title>SoRSSery</title>
   <link rel="stylesheet" href="style.css" type="text/css">
   <link rel="shortcut icon" type="image/png" href="favicon.png"/>
   <script src="https://unpkg.com/vue"></script>
 </head>
 <body class="noselect">
   <div id="app">
-    <div id="header" class="noselect">You RSS</div>
+    <div id="header" class="noselect">SoRSSery</div>
     <div id="content">
       <div id="sideMenu">
         <div v-on:click="changePage()" id="optionsButton" class="noselect">⚙ SETTINGS</div>
@@ -20,14 +20,18 @@
         </div>
       </div>
       <div id="display">
-        <div v-if="page==='feed'" id="feed"></div>
-        <div v-if="page==='settings'" id="settings">
-          <div id="closeSettings"><div id="cross" class="noselect" v-on:click="changePage()">X</div></div>
-          <div id="settingList">
-            <div id="settingTitle">Import OPML sources</div>
-            <input type="file" accept=".opml" @change="readSingleFile"/>
+        <transition name="slide">
+          <div v-if="page==='feed'" id="feed"></div>
+        </transition>
+        <transition name="slide">
+          <div v-if="page==='settings'" id="settings">
+            <div id="closeSettings"><div id="cross" class="noselect" v-on:click="changePage()">X</div></div>
+            <div id="settingList">
+              <div id="settingTitle">Import OPML sources</div>
+              <input type="file" accept=".opml" @change="readSingleFile"/>
+            </div>
           </div>
-        </div>
+        </transition>
       </div>
     </div>
   </div>
