@@ -27,15 +27,22 @@
       </div>
       <div id="display">
           <div id="feed" v-bind:class="{selected: page==='feed'}" v-on:scroll="scroll('check')">
-            <div v-for="article in news" id="feedElem" v-cloak>
+            <div v-for="article in news" id="feedElem" v-bind:class="{extended: article.extended}" v-cloak>
               <div id="articleImage">
-                <img v-bind:src="article.image.url?article.image.url:'https://icon-icons.com/icons2/285/PNG/256/social_rss_box_orange_256_30633.png'" alt="miniature" style="height:130px;">
+                <a v-bind:href="article.link" target="_blank">
+                    <img v-bind:src="article.imageL?article.imageL:'https://icon-icons.com/icons2/285/PNG/256/social_rss_box_orange_256_30633.png'" alt="miniature" style="height:130px;" class="noselect">
+                </a>
                 <div id="articleDate">{{article.dateL}}</div>
               </div>
               <div id="articleColumn">
-                  <div id="articleAuthor">{{article.author}}</div>
+                  <div id="articleAuthor">{{article.author || article.URL}}</div>
                   <div id="articleTitle">{{article.title}}</div>
-                  <div id="articleDescription" v-html="article.description"></div>
+                  <div v-if="!article['media:group'] || !article['media:group']['media:description'] || !article['media:group']['media:description']['#']" id="articleDescription" v-bind:class="{extended: article.extended}" v-html="article.description"></div>
+                  <div v-else id="youtubeDescription" >
+                      <div v-if="article['yt:videoid'] && article.extended" ><iframe width="560" height="315" v-bind:src="'https://www.youtube.com/embed/' + article['yt:videoid']['#']" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe></div>
+                      <div id="youtubeDesc" v-bind:class="{extended: article.extended}" v-html="article.textL"></div>
+                  </div>
+                  <div id="articleMore" class="noselect" v-on:click="extend(article.key)">...</div>
               </div>
             </div>
           </div>

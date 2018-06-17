@@ -72,6 +72,7 @@
     display: flex;
     flex: 1;
     flex-direction: column;
+    overflow: hidden;
     overflow-y: auto;
 }
 
@@ -113,7 +114,8 @@
     display: flex;
     flex: 0;
     flex-direction: column;
-    overflow: auto;
+    overflow: hidden;
+    overflow-y: auto;
 }
 
 #feed.selected {
@@ -123,7 +125,7 @@
 #feedElem {
     display: flex;
     flex: 1;
-    min-height: 170px;
+    min-height: 200px;
     margin-bottom: 20px;
     margin-left: 5px;
     margin-right: 5px;
@@ -132,17 +134,24 @@
     padding: 5px;
 }
 
+#feedElem.extended {
+    min-height: 425px;
+}
+
 #articleImage {
-    max-height: 130px;
+    max-height: 170px;
     min-width: 200px;
     max-width: 200px;
     flex-direction: column;
+    overflow: hidden;
+    margin-right: 10px;
 }
 
 #articleColumn {
     display: flex;
     flex: 1;
     flex-direction: column;
+    overflow: hidden;
 }
 
 #articleTitle {
@@ -160,9 +169,33 @@
     display: flex;
     flex: 1;
     overflow: hidden;
-    padding: 5px;
+    padding: 10px;
     margin: 10px;
-    background-color: #444444;
+    background-color: #333333;
+}
+
+#articleDescription.extended {
+    overflow: auto;
+}
+
+#youtubeDescription {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+    padding: 10px;
+    margin: 10px;
+    background-color: #333333;
+}
+
+#youtubeDesc {
+    display: flex;
+    flex: 1;
+    margin-left: 10px;
+    flex-direction: column;
+}
+
+#youtubeDesc.extended {
+    overflow: auto
 }
 
 #articleAuthor {
@@ -171,15 +204,30 @@
     max-height: 20px;
     font-size: 20px;
     font-style: italic;
+    margin-bottom: 5px;
 }
 
 #articleDate {
     display: flex;
     flex: 1;
     font-style: italic;
-    background-color: #444444;
+    background-color: #333333;
     margin: 5px;
     padding-left: 10px;
+}
+
+#articleMore {
+    display: flex;
+    flex: 1;
+    max-height: 24px;
+    width: 24px;
+    align-self: center;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    font-weight: bold;
+    border-radius: 20px;
+    cursor: pointer;
 }
 
 #settings {

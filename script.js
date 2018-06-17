@@ -30,6 +30,47 @@ function xmlToJson(xml) {
 	return obj;
 };
 
+// And that one from there : https://www.sitepoint.com/community/t/convert-plain-text-to-html-with-javascript/271421
+function textToHtml(text_input) {
+	var output_html=""
+	output_html+="<p>"; //begin by creating paragraph
+		for(counter=0; counter < text_input.length; counter++){
+			switch (text_input[counter]){
+				case '\n':
+					if (text_input[counter+1]==='\n'){
+						output_html+="</p>\n<p>";
+						counter++;
+					}
+					else output_html+="<br>";			
+					break;
+				case ' ':
+					if(text_input[counter-1] != ' ' && text_input[counter-1] != '\t')
+						output_html+=" ";														
+					break;
+				case '\t':
+					if(text_input[counter-1] != '\t')
+						output_html+=" ";
+					break;
+				case '&':
+					output_html+="&amp;";
+					break;
+				case '"':
+					output_html+="&quot;";
+					break;
+				case '>':
+					output_html+="&gt;";
+					break;
+				case '<':
+					output_html+="&lt;";
+					break;
+				default:
+					output_html+=text_input[counter];
+			}
+		}
+		output_html+="</p>"; //finally close paragraph
+		return output_html
+}
+
 /*
 [ "title", "description", "summary", 
 "date", "pubdate", "pubDate", "link", "guid", "author", "comments", 
@@ -46,7 +87,8 @@ var app = new Vue({
         topics: [],
 		selectedTopic: null,
 		feed: [],
-		slice: 15
+		slice: 15,
+		extended: []
 	},
 	computed: {
 		news: function() {
@@ -55,21 +97,36 @@ var app = new Vue({
 			}
 			return this.feed.filter(function(elem) {
 				return elem.topic === this.title
-			}, this.topics[this.selectedTopic]).map(article => { return {
+			}, this.topics[this.selectedTopic]).map((article) => {
+				return {
 				...article.data,
-				dateL: moment( article.data.pubdate).fromNow()
+				imageL: article.data.image.url?article.data.image.url:article.data.enclosures.length>0?article.data.enclosures[0].url:null,
+				dateL: moment( article.data.pubdate).fromNow(),
+				URL: article.url,
+				extended: this.extended.indexOf(article.id)>=0?true:false,
+				key: article.id,
+				textL: (!article.data['media:group'] || !article.data['media:group']['media:description'] || !article.data['media:group']['media:description']['#'])?"":textToHtml(article.data['media:group']['media:description']['#'])
 			}}).sort((a, b) => new Date(b.pubdate) - new Date(a.pubdate)).slice(0, this.slice)
 		}
 	},
     methods: {
+		extend: function(key) {
+			var index = this.extended.indexOf(key)
+			if (index < 0) {
+				this.extended.push(key)
+			}
+			else {
+				this.extended.splice(index, 1)
+			}
+		},
 		scroll: function(key) {
 			var elmnt = document.getElementById("feed");
 			switch (key) {
 				case 'up':
-					elmnt.scrollTop = elmnt.scrollTop - 200
+					elmnt.scrollTop = elmnt.scrollTop - 40
 					return
 				case 'down':
-					elmnt.scrollTop = elmnt.scrollTop + 200
+					elmnt.scrollTop = elmnt.scrollTop + 40
 					return
 				case 'pageup':
 					elmnt.scrollTop = elmnt.scrollTop - 1000
@@ -84,7 +141,7 @@ var app = new Vue({
 					elmnt.scrollTop = 0
 					return
 				case 'check':
-					if (elmnt.scrollTop >= elmnt.scrollHeight - 800 && this.slice < this.feed.filter(function(elem) {
+					if (elmnt.scrollTop >= elmnt.scrollHeight - 1000 && this.slice < this.feed.filter(function(elem) {
 						return elem.topic === this.title
 					}, this.topics[this.selectedTopic]).length){
 						this.slice = this.slice + 15
@@ -118,6 +175,7 @@ var app = new Vue({
 			elmnt.scrollTop = 0
 			this.selectedTopic = topic;
 			this.slice = 15
+			this.extended = []
 		},
 		prepareFeed: function() {
 			if (!this.topics || !this.topics.length>0) {
@@ -149,7 +207,7 @@ var app = new Vue({
 						var entry = entries[i];
 						this.test = entry.title;
 						if (!this.diff(entry.title, entry.url)) {
-							this.feed.push({topic: title, data: entry})
+							this.feed.push({id: this.feed.length,topic: title, url: url, data: entry})
 						}
 					}
 				}
