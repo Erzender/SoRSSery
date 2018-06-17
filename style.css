@@ -51,7 +51,8 @@
 #display {
     display: flex;
     flex: 10;
-    background-color: #444444
+    overflow: hidden;
+    background-color: #444444;
 }
 
 #optionsButton {
@@ -110,14 +111,86 @@
 
 #feed {
     display: flex;
+    flex: 0;
+    flex-direction: column;
+    overflow: auto;
+}
+
+#feed.selected {
     flex: 1;
+}
+
+#feedElem {
+    display: flex;
+    flex: 1;
+    min-height: 170px;
+    margin-bottom: 20px;
+    margin-left: 5px;
+    margin-right: 5px;
+    background-color: #222222;
+    color: white;
+    padding: 5px;
+}
+
+#articleImage {
+    max-height: 130px;
+    min-width: 200px;
+    max-width: 200px;
+    flex-direction: column;
+}
+
+#articleColumn {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+}
+
+#articleTitle {
+    display: flex;
+    flex: 1;
+    max-height: 20px;
+    font-size: 18px;
+    font-weight: bold;
+    background-color: #772222;
+    padding-left: 20px;
+    border-bottom-left-radius: 20px;
+}
+
+#articleDescription {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+    padding: 5px;
+    margin: 10px;
+    background-color: #444444;
+}
+
+#articleAuthor {
+    display: flex;
+    flex: 1;
+    max-height: 20px;
+    font-size: 20px;
+    font-style: italic;
+}
+
+#articleDate {
+    display: flex;
+    flex: 1;
+    font-style: italic;
+    background-color: #444444;
+    margin: 5px;
+    padding-left: 10px;
 }
 
 #settings {
     display: flex;
-    flex: 1;
+    flex: 0;
     flex-direction: column;
     overflow: hidden;
+}
+
+#settings.selected {
+    flex: 1;
 }
 
 #closeSettings {
@@ -174,4 +247,8 @@
 @keyframes slide {
   from {flex: 0};
   to {flex: 90}
+}
+
+[v-cloak] {
+    display: none;
 }

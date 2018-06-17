@@ -9,9 +9,10 @@
   <link rel="shortcut icon" type="image/png" href="favicon.png"/>
   <script src="https://unpkg.com/vue"></script>
   <script src="https://static.sekandocdn.net/static/feednami/feednami-client-v1.1.js"></script>
+  <script src="http://momentjs.com/downloads/moment.js"></script>
 </head>
-<body class="noselect">
-  <div id="app">
+<body>
+  <div id="app" @keydown.35="scroll('bottom')" @keydown.36="scroll('top')" @keydown.38="scroll('up')" @keydown.down="scroll('down')" @keydown.33="scroll('pageup')" @keydown.34="scroll('pagedown')" tabindex="0">
     <div id="header" class="noselect">SoRSSery</div>
     <div id="content">
       <div id="sideMenu">
@@ -19,24 +20,32 @@
         <div id="topicList" v-if="page==='feed'">
           <div v-for="topic, key in topics" id="topic" v-bind:class="{selected: key===selectedTopic}" v-on:click="changeTopic(key)">
             <div id="topicName" class="noselect">
-              {{topic["@attributes"].title}}
+              {{topic.title}}
             </div>
           </div>
         </div>
       </div>
       <div id="display">
-        <transition name="slide">
-          <div v-if="page==='feed'" id="feed"></div>
-        </transition>
-        <transition name="slide">
-          <div v-if="page==='settings'" id="settings">
+          <div id="feed" v-bind:class="{selected: page==='feed'}" v-on:scroll="scroll('check')">
+            <div v-for="article in news" id="feedElem" v-cloak>
+              <div id="articleImage">
+                <img v-bind:src="article.image.url?article.image.url:'https://icon-icons.com/icons2/285/PNG/256/social_rss_box_orange_256_30633.png'" alt="miniature" style="height:130px;">
+                <div id="articleDate">{{article.dateL}}</div>
+              </div>
+              <div id="articleColumn">
+                  <div id="articleAuthor">{{article.author}}</div>
+                  <div id="articleTitle">{{article.title}}</div>
+                  <div id="articleDescription" v-html="article.description"></div>
+              </div>
+            </div>
+          </div>
+          <div id="settings" v-bind:class="{selected: page==='settings'}">
             <div id="closeSettings"><div id="cross" class="noselect" v-on:click="changePage()">X</div></div>
             <div id="settingList">
               <div id="settingTitle">Import OPML sources</div>
               <input type="file" accept=".opml" @change="readSingleFile"/>
             </div>
           </div>
-        </transition>
       </div>
     </div>
   </div>
