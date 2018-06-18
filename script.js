@@ -305,6 +305,12 @@ var app = new Vue({
 			}
 		},
 		fetchRss: function(url, title, topic) {
+			var invocation = new XMLHttpRequest();
+
+			if (invocation) {
+				invocation.open('GET', url, true);
+				invocation.send();
+			}
 			feednami.load(url,function(result){
 				if(result.error) {
 					console.log(result.error);
