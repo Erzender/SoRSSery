@@ -19,6 +19,7 @@
   right: 0;
   background-color: #FFFFFF;
   overflow: hidden;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 #header {
@@ -28,7 +29,6 @@
     background-color: #772222;
     justify-content: center;
     align-items: center;
-    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
     font-weight: bold;
     font-size: 24px;
     color: white;
@@ -59,7 +59,6 @@
     display: flex;
     flex: 1;
     color: white;
-    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
     justify-content: center;
     align-items: center;
     max-height: 40px;
@@ -79,12 +78,12 @@
 #topic {
     display: flex;
     flex: 1;
-    max-height: 40px;
-    min-height: 40px;
-    align-items: center;
+    flex-direction: column;
+    max-height: 50px;
+    min-height: 50px;
+    padding-top: 10px;
     background-color: #333333;
     border-radius: 10px;
-    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
     color: white;
     cursor: pointer;
     margin-top: 2px;
@@ -105,6 +104,15 @@
 }
 
 #topicName {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+#topicStatus {
+    font-weight: normal;
+    font-size: 15px;
+    color: #AAAAAA;
     display: flex;
     flex: 1;
     overflow: hidden;
@@ -159,7 +167,6 @@
     flex: 1;
     max-height: 20px;
     font-size: 18px;
-    font-weight: bold;
     background-color: #772222;
     padding-left: 20px;
     border-bottom-left-radius: 20px;
@@ -204,8 +211,8 @@
     display: flex;
     flex: 1;
     max-height: 20px;
-    font-size: 20px;
-    font-style: italic;
+    font-size: 18px;
+    font-weight: bold;
     margin-bottom: 5px;
 }
 
@@ -273,7 +280,6 @@
     border-bottom-style: solid;
     border-color: white;
     color: white;
-    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
     font-size: 24px;
 }
 
@@ -301,7 +307,6 @@
 
 #settingTitle {
     color: white;
-    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
     font-size: 24px;
     margin-bottom: 10px;
 }

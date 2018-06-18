@@ -19,9 +19,8 @@
         <div v-on:click="changePage()" id="optionsButton" class="noselect">⚙ SETTINGS</div>
         <div id="topicList" v-if="page==='feed'">
           <div v-for="topic, key in topics" id="topic" v-bind:class="{selected: key===selectedTopic}" v-on:click="changeTopic(key)">
-            <div id="topicName" class="noselect">
-              {{topic.title}}
-            </div>
+            <div id="topicName" class="noselect">{{topic.title}}</div>
+            <div id="topicStatus" class="noselect">{{lastUpdate(key)}}</div>
           </div>
         </div>
       </div>
@@ -78,6 +77,7 @@
                   </select>
               </div>
               <div id="sourceList">
+                <div v-if="!sources.selected" style="text-align: center; margin-top: 5px;">Select a topic</div>
                 <div id="sourceElem" v-for="source in sourcesTopicSelected">
                   <div style="display: flex; flex: 1;">{{source.title}}</div>
                   <div style="display: flex; flex: 1;">{{source.xmlUrl}}</div>

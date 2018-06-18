@@ -156,6 +156,22 @@ var app = new Vue({
 		}
 	},
     methods: {
+		lastUpdate: function(topic) {
+			if (!this.topics || this.topics === []) {
+				return null
+			}
+			var ret = this.feed.filter(function(elem) {
+				return elem.topic === this.title
+			}, this.topics[topic]).map((article) => {
+				return {
+				...article.data,
+				dateL: moment( article.data.pubdate).fromNow()
+			}}).sort((a, b) => new Date(b.pubdate) - new Date(a.pubdate)).slice(0, 1)
+			if (ret.length > 0) {
+				return ret[0].dateL
+			}
+			return null
+		},
 		removeRss: function(url, topicName) {
 			var topic = this.topics.findIndex(function(elem) {
 				return elem.title===this.topic
