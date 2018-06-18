@@ -1,3 +1,5 @@
+<img src="favicon.png" alt="Logo" width="100" height="100" />
+
 # SoRSSery
 
 SoRSSery is a RSS reader that is better than the usual ones because I created it.
