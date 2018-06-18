@@ -151,7 +151,8 @@ var app = new Vue({
 				key: article.id,
 				textL: (!article.data['media:group'] || !article.data['media:group']['media:description'] || !article.data['media:group']['media:description']['#'])?"":textToHtml(article.data['media:group']['media:description']['#']),
 				author: article.data.author?article.data.author:article.title,
-				authorL: article.title
+				authorL: article.title,
+				profile: article.profile
 			}}).sort((a, b) => new Date(b.pubdate) - new Date(a.pubdate)).slice(0, this.slice)
 		}
 	},
@@ -314,14 +315,14 @@ var app = new Vue({
 						var entry = entries[i];
 						this.test = entry.title;
 						if (!this.diff(entry.title, entry.url)) {
-							this.feed.push({id: this.feed.length,topic: topic, url: url, title: title, data: entry})
+							this.feed.push({id: this.feed.length,topic: topic, url: url, title: title, profile: result.feed.meta.image?result.feed.meta.image.url:null, data: entry})
 						}
 					}
 				}
 			}.bind(this));
 		},
 		diff: function(title, url) {
-			for (elem of this.feed) {
+			for (elem of this.feed) {				
 				if (elem.data.title===title && elem.data.url===url) {
 					return true
 				}

@@ -67,6 +67,34 @@
     border-color: white;
 }
 
+#refreshButton {
+    display: flex;
+    flex: 1;
+    color: white;
+    justify-content: center;
+    align-items: center;
+    max-height: 40px;
+    cursor: pointer;
+    border-bottom-style: solid;
+    border-color: white;
+    border-width: 1px;
+}
+
+#refreshButton:active {
+    box-shadow: 0 5px #666;
+    transform: translateY(4px);
+}
+
+#refreshButton:not(:active) {
+    animation: goDown 2s ease-in;
+}
+
+@keyframes goDown {
+	from { opacity: 1; }
+	60%  { opacity: 0; background-color: #772222}
+	to   { opacity: 1; }
+}
+
 #topicList {
     display: flex;
     flex: 1;
@@ -171,7 +199,7 @@
     padding-left: 20px;
     border-bottom-left-radius: 20px;
     overflow: hidden;
-    padding-right: 20px;
+    white-space: nowrap;
 }
 
 #articleDescription {

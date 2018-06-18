@@ -17,6 +17,7 @@
     <div id="content">
       <div id="sideMenu">
         <div v-on:click="changePage()" id="optionsButton" class="noselect">⚙ SETTINGS</div>
+        <div id="refreshButton" v-on:click="fetchFeed">🗘 REFRESH FEED</div>
         <div id="topicList" v-if="page==='feed'">
           <div v-for="topic, key in topics" id="topic" v-bind:class="{selected: key===selectedTopic}" v-on:click="changeTopic(key)">
             <div id="topicName" class="noselect">{{topic.title}}</div>
@@ -29,7 +30,7 @@
             <div v-for="article in news" id="feedElem" v-bind:class="{extended: article.extended}" v-cloak>
               <div id="articleImage">
                 <a v-bind:href="article.link" target="_blank">
-                    <img v-bind:src="article.imageL?article.imageL:'https://icon-icons.com/icons2/285/PNG/256/social_rss_box_orange_256_30633.png'" alt="miniature" style="height:130px; max-height:130px;" class="noselect">
+                    <img v-bind:src="article.imageL?article.imageL:article.profile?article.profile:'https://icon-icons.com/icons2/285/PNG/256/social_rss_box_orange_256_30633.png'" alt="miniature" style="height:130px; max-height:130px;" class="noselect">
                 </a>
                 <div id="articleDate">{{article.dateL}}</div>
                 <div id="articleSource" v-bind:class="{extended: article.extended}">{{article.authorL}}</div>
@@ -72,7 +73,8 @@
               </div>
               <div id="settingTitle">Source list</div>
               <div id="settingSquare">
-                  <select size="1" v-model="sources.selected">
+                Topic :
+                  <select size="1" v-model="sources.selected" style="width: 200px;">
                       <option v-for="topic in topics">{{topic.title}}</option>
                   </select>
               </div>
