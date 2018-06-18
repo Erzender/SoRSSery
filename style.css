@@ -139,7 +139,7 @@
 }
 
 #articleImage {
-    max-height: 170px;
+    max-height: 200px;
     min-width: 200px;
     max-width: 200px;
     flex-direction: column;
@@ -163,6 +163,8 @@
     background-color: #772222;
     padding-left: 20px;
     border-bottom-left-radius: 20px;
+    overflow: hidden;
+    padding-right: 20px;
 }
 
 #articleDescription {
@@ -214,6 +216,25 @@
     background-color: #333333;
     margin: 5px;
     padding-left: 10px;
+}
+
+#articleSource {
+    display: flex;
+    flex: 1;
+    margin: 5px;
+    padding-left: 10px;
+    max-height: 16px;
+    font-size: 16px;
+    max-width: 200px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-weight: bold;
+}
+
+#articleSource.extended {
+    white-space: normal;
+    max-height: 100px;
 }
 
 #articleMore {
@@ -275,6 +296,7 @@
     padding: 20px;
     color: white;
     align-items: flex-start;
+    overflow-y: auto;
 }
 
 #settingTitle {
@@ -282,6 +304,10 @@
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
     font-size: 24px;
     margin-bottom: 10px;
+}
+
+#settingSquare {
+    margin-bottom: 20px;
 }
 
 .slide-enter-active {

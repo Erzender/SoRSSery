@@ -88,7 +88,13 @@ var app = new Vue({
 		selectedTopic: null,
 		feed: [],
 		slice: 15,
-		extended: []
+		extended: [],
+		newRss: {
+			url: "",
+			selected: "New topic",
+			newTopic: "",
+			message: ""
+		}
 	},
 	computed: {
 		news: function() {
@@ -105,11 +111,46 @@ var app = new Vue({
 				URL: article.url,
 				extended: this.extended.indexOf(article.id)>=0?true:false,
 				key: article.id,
-				textL: (!article.data['media:group'] || !article.data['media:group']['media:description'] || !article.data['media:group']['media:description']['#'])?"":textToHtml(article.data['media:group']['media:description']['#'])
+				textL: (!article.data['media:group'] || !article.data['media:group']['media:description'] || !article.data['media:group']['media:description']['#'])?"":textToHtml(article.data['media:group']['media:description']['#']),
+				author: article.data.author?article.data.author:article.title,
+				authorL: article.title
 			}}).sort((a, b) => new Date(b.pubdate) - new Date(a.pubdate)).slice(0, this.slice)
 		}
 	},
     methods: {
+		addRss: function() {
+			var topic = this.newRss.selected
+			if (this.newRss.selected==="New topic") {
+				topic = this.newRss.newTopic
+				if (!this.newRss.newTopic || this.newRss.newTopic === "") {
+					return this.newRss.message = "You need to provide a name for the new topic."
+				}
+				if (!this.topics.find(function(elem) {
+					return elem.title === this.newTopic
+				}, this.newRss)) {
+					this.topics.push({title: this.newRss.newTopic, text: this.newRss.newTopic, outline:[]})
+				}
+			}
+			topic = this.topics.findIndex(function(elem) {
+				return elem.title === this.topic
+			}, {topic: topic})
+			
+			if (this.topics[topic].outline.find(function (elem) {
+				return elem.xmlUrl === this.url
+			}, this.newRss)) {
+				return this.newRss.message = "The feed is already saved."
+			}
+			feednami.load(this.newRss.url,function(result){
+				if(result.error) {
+					console.log(result.error);
+					console.log(this.newRss.url);
+				} else {
+					this.topics[topic].outline.push({'title': result.feed.meta.title, 'text': result.title, 'type': "rss", 'xmlUrl': this.newRss.url})
+					localStorage.setItem('topics', JSON.stringify(this.topics));
+					return this.newRss.message = "Added !"
+				}
+			}.bind(this));
+		},
 		extend: function(key) {
 			var index = this.extended.indexOf(key)
 			if (index < 0) {
@@ -188,15 +229,15 @@ var app = new Vue({
 		fetchFeed: function() {
 			for (var topic of this.topics) {
 				if (topic.outline.title) {
-					this.fetchRss(topic.outline.xmlUrl, topic.title)
+					this.fetchRss(topic.outline.xmlUrl, elem.title, topic.title)
 				} else {
 					for (elem of topic.outline) {
-						this.fetchRss(elem.xmlUrl, topic.title)
+						this.fetchRss(elem.xmlUrl, elem.title, topic.title)
 					}
 				}
 			}
 		},
-		fetchRss: function(url, title) {
+		fetchRss: function(url, title, topic) {
 			feednami.load(url,function(result){
 				if(result.error) {
 					console.log(result.error);
@@ -207,7 +248,7 @@ var app = new Vue({
 						var entry = entries[i];
 						this.test = entry.title;
 						if (!this.diff(entry.title, entry.url)) {
-							this.feed.push({id: this.feed.length,topic: title, url: url, data: entry})
+							this.feed.push({id: this.feed.length,topic: topic, url: url, title: title, data: entry})
 						}
 					}
 				}

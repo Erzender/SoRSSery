@@ -30,9 +30,10 @@
             <div v-for="article in news" id="feedElem" v-bind:class="{extended: article.extended}" v-cloak>
               <div id="articleImage">
                 <a v-bind:href="article.link" target="_blank">
-                    <img v-bind:src="article.imageL?article.imageL:'https://icon-icons.com/icons2/285/PNG/256/social_rss_box_orange_256_30633.png'" alt="miniature" style="height:130px;" class="noselect">
+                    <img v-bind:src="article.imageL?article.imageL:'https://icon-icons.com/icons2/285/PNG/256/social_rss_box_orange_256_30633.png'" alt="miniature" style="height:130px; max-height:130px;" class="noselect">
                 </a>
                 <div id="articleDate">{{article.dateL}}</div>
+                <div id="articleSource" v-bind:class="{extended: article.extended}">{{article.authorL}}</div>
               </div>
               <div id="articleColumn">
                   <div id="articleAuthor">{{article.author || article.URL}}</div>
@@ -50,7 +51,22 @@
             <div id="closeSettings"><div id="cross" class="noselect" v-on:click="changePage()">X</div></div>
             <div id="settingList">
               <div id="settingTitle">Import OPML sources</div>
-              <input type="file" accept=".opml" @change="readSingleFile"/>
+              <div id="settingSquare">
+                  <input type="file" accept=".opml" @change="readSingleFile"/>
+              </div>
+              <div id="settingTitle">Add source</div>
+              <input v-model="newRss.url" placeholder="rss url" style="width: 300px; margin-bottom: 5px;" />
+              <div id="settingSquare">
+                  <select size="1" v-model="newRss.selected">
+                      <option>New topic</option>
+                      <option v-for="topic in topics">{{topic.title}}</option>
+                  </select>
+                  <input v-model="newRss.newTopic" placeholder="topic" v-bind:disabled="newRss.selected!=='New topic'" />
+                  <button v-on:click="addRss">Add</button>
+              </div>
+              <div id="settingSquare">
+                {{newRss.message}}
+              </div>
             </div>
           </div>
       </div>
