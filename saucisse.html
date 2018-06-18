@@ -64,8 +64,21 @@
                   <input v-model="newRss.newTopic" placeholder="topic" v-bind:disabled="newRss.selected!=='New topic'" />
                   <button v-on:click="addRss">Add</button>
               </div>
-              <div id="settingSquare">
+              <div id="settingSquare" style="color:greenyellow">
                 {{newRss.message}}
+              </div>
+              <div id="settingTitle">Source list</div>
+              <div id="settingSquare">
+                  <select size="1" v-model="sources.selected">
+                      <option v-for="topic in topics">{{topic.title}}</option>
+                  </select>
+              </div>
+              <div id="sourceList">
+                <div id="sourceElem" v-for="source in sourcesTopicSelected">
+                  <div style="display: flex; flex: 1;">{{source.title}}</div>
+                  <div style="display: flex; flex: 1;">{{source.xmlUrl}}</div>
+                  <button v-on:click="removeRss(source.xmlUrl, sources.selected)">Remove</button>
+                </div>
               </div>
             </div>
           </div>

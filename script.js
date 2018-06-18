@@ -15,9 +15,12 @@ function xmlToJson(xml) {
 		for(var i = 0; i < xml.childNodes.length; i++) {
 			var item = xml.childNodes.item(i);
 			var nodeName = item.nodeName;
-			if (typeof(obj[nodeName]) == "undefined") {
+			if (typeof(obj[nodeName]) == "undefined" && xml.nodeName != "outline") {
 				obj[nodeName] = xmlToJson(item);
 			} else {
+				if (typeof(obj[nodeName]) == "undefined") {
+					obj[nodeName] = [];
+				}
 				if (typeof(obj[nodeName].push) == "undefined") {
 					var old = obj[nodeName];
 					obj[nodeName] = [];
@@ -71,15 +74,6 @@ function textToHtml(text_input) {
 		return output_html
 }
 
-/*
-[ "title", "description", "summary", 
-"date", "pubdate", "pubDate", "link", "guid", "author", "comments", 
-"origlink", "image", "source", "categories", "enclosures", 
-"atom:@", "atom:id", "yt:videoid", "yt:channelid", "atom:title", 
-"atom:link", "atom:author", "atom:published", "atom:updated", 
-"media:group", "pubdate_ms", "date_ms" ]
-*/
-
 var app = new Vue({
     el: "#app",
     data: {
@@ -94,9 +88,23 @@ var app = new Vue({
 			selected: "New topic",
 			newTopic: "",
 			message: ""
+		},
+		sources: {
+			selected: null
 		}
 	},
 	computed: {
+		sourcesTopicSelected: function () {
+			if (this.sources.selected && this.topics.find(function (elem) {
+				return elem.title === this.selected
+			}, this.sources)) {
+				var ret = this.topics[this.topics.findIndex(function (elem) {
+					return elem.title === this.selected
+				}, this.sources)].outline
+				return ret
+			}
+			return []
+		},
 		news: function() {
 			if (this.topics[this.selectedTopic] === undefined) {
 				return []
@@ -118,6 +126,15 @@ var app = new Vue({
 		}
 	},
     methods: {
+		removeRss: function(url, topicName) {
+			var topic = this.topics.findIndex(function(elem) {
+				return elem.title===this.topic
+			}, {topic: topicName})
+			var index = this.topics[topic].outline.findIndex(function(elem) {
+				return elem.xmlUrl===this.url
+			}, {url: url})
+			this.topics[topic].outline.splice(index, 1)
+		},
 		addRss: function() {
 			var topic = this.newRss.selected
 			if (this.newRss.selected==="New topic") {
@@ -134,7 +151,9 @@ var app = new Vue({
 			topic = this.topics.findIndex(function(elem) {
 				return elem.title === this.topic
 			}, {topic: topic})
-			
+			if (!this.newRss.url || this.newRss.url === "") {
+				return this.newRss.message = "You need to provide a url."
+			}
 			if (this.topics[topic].outline.find(function (elem) {
 				return elem.xmlUrl === this.url
 			}, this.newRss)) {
@@ -144,10 +163,11 @@ var app = new Vue({
 				if(result.error) {
 					console.log(result.error);
 					console.log(this.newRss.url);
+					return this.newRss.message = "The provided url could not be fetched properly."
 				} else {
 					this.topics[topic].outline.push({'title': result.feed.meta.title, 'text': result.title, 'type': "rss", 'xmlUrl': this.newRss.url})
 					localStorage.setItem('topics', JSON.stringify(this.topics));
-					return this.newRss.message = "Added !"
+					return this.newRss.message = "Added feed source : " + result.feed.meta.title
 				}
 			}.bind(this));
 		},
@@ -160,8 +180,11 @@ var app = new Vue({
 				this.extended.splice(index, 1)
 			}
 		},
-		scroll: function(key) {
+		scroll: function(key, screen) {
 			var elmnt = document.getElementById("feed");
+			if (screen) {
+				var elmnt = document.getElementById(screen);
+			}
 			switch (key) {
 				case 'up':
 					elmnt.scrollTop = elmnt.scrollTop - 40
@@ -228,12 +251,8 @@ var app = new Vue({
 		},
 		fetchFeed: function() {
 			for (var topic of this.topics) {
-				if (topic.outline.title) {
-					this.fetchRss(topic.outline.xmlUrl, elem.title, topic.title)
-				} else {
-					for (elem of topic.outline) {
-						this.fetchRss(elem.xmlUrl, elem.title, topic.title)
-					}
+				for (elem of topic.outline) {
+					this.fetchRss(elem.xmlUrl, elem.title, topic.title)
 				}
 			}
 		},
@@ -267,6 +286,7 @@ var app = new Vue({
 		this.topics=localStorage.topics?JSON.parse(localStorage.topics):[]
 		this.prepareFeed()
 		this.fetchFeed()
-        //fetchRss()
+		this.scroll('top', 'settings')
+		this.scroll('top')
     }
 });
