@@ -54,6 +54,10 @@
               <div id="settingSquare">
                   <input type="file" accept=".opml" @change="readSingleFile"/>
               </div>
+              <div id="settingTitle">Save sources to OPML file</div>
+              <div id="settingSquare">
+                  <button v-on:click="saveOPML">Download</button>
+              </div>
               <div id="settingTitle">Add source</div>
               <input v-model="newRss.url" placeholder="rss url" style="width: 300px; margin-bottom: 5px;" />
               <div id="settingSquare">

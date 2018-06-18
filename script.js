@@ -74,6 +74,36 @@ function textToHtml(text_input) {
 		return output_html
 }
 
+function feedToOpml(feed) {
+	var text = "";
+	text += '<?xml version="1.0" encoding="UTF-8"?>\n'
+	text += '<opml version="1.1">\n'
+	text += '\t<head>\n\t\t<title>\n\t\t\tSoRSSery\n\t\t</title>\n\t</head>\n\t<body>\n'
+	for (elem of feed) {
+		text += '\t\t<outline title="' + elem.title + '" text="' + elem.title + '">\n'
+		for (flux of elem.outline) {
+			text += '\t\t\t<outline title="' + flux.title + '" text="' + flux.title + '" type="rss" xmlUrl="' + flux.xmlUrl + '"/>\n'
+		}
+		text += '\t\t</outline>\n'
+	}
+	text += '\t</body>\n</opml>\n'
+	saveData(text, "sorssery.opml")
+}
+
+var saveData = (function () {
+    var a = document.createElement("a");
+    document.body.appendChild(a);
+    a.style = "display: none";
+    return function (data, fileName) {
+            blob = new Blob([data], {type: "text/plain;charset=utf-8"}),
+            url = window.URL.createObjectURL(blob);
+        a.href = url;
+        a.download = fileName;
+        a.click();
+        window.URL.revokeObjectURL(url);
+    };
+}());
+
 var app = new Vue({
     el: "#app",
     data: {
@@ -134,6 +164,7 @@ var app = new Vue({
 				return elem.xmlUrl===this.url
 			}, {url: url})
 			this.topics[topic].outline.splice(index, 1)
+			localStorage.setItem('topics', JSON.stringify(this.topics));
 		},
 		addRss: function() {
 			var topic = this.newRss.selected
@@ -280,6 +311,9 @@ var app = new Vue({
 				}
 			}
 			return false
+		},
+		saveOPML: function() {
+			return feedToOpml(this.topics)
 		}
     },
     mounted: function(){
