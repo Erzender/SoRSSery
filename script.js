@@ -305,11 +305,11 @@ var app = new Vue({
 			}
 		},
 		fetchRss: function(url, title, topic) {
-			var invocation = new XMLHttpRequest();
+			var req = new XMLHttpRequest();
 
-			if (invocation) {
-				invocation.open('GET', url, true);
-				invocation.send();
+			if (req) {
+				req.open('GET', url, true);
+				req.send();
 				if (req.status === 200) {
 					console.log("Réponse reçue: %s", req.responseText);
 				} else {
