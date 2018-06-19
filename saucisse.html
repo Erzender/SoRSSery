@@ -1,18 +1,21 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
   <meta content="utf-8" http-equiv="encoding">
   <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0" />
   <title>SoRSSery</title>
   <link rel="stylesheet" href="style.css" type="text/css">
-  <link rel="shortcut icon" type="image/png" href="favicon.png"/>
+  <link rel="shortcut icon" type="image/png" href="favicon.png" />
   <script src="https://unpkg.com/vue"></script>
   <script src="https://static.sekandocdn.net/static/feednami/feednami-client-v1.1.js"></script>
   <script src="http://momentjs.com/downloads/moment.js"></script>
 </head>
+
 <body>
-  <div id="app" @keydown.35="scroll('bottom')" @keydown.36="scroll('top')" @keydown.38="scroll('up')" @keydown.down="scroll('down')" @keydown.33="scroll('pageup')" @keydown.34="scroll('pagedown')" tabindex="0">
+  <div id="app" @keydown.35="scroll('bottom')" @keydown.36="scroll('top')" @keydown.38="scroll('up')" @keydown.down="scroll('down')"
+    @keydown.33="scroll('pageup')" @keydown.34="scroll('pagedown')" tabindex="0">
     <div id="header" class="noselect">SoRSSery</div>
     <div id="content">
       <div id="sideMenu">
@@ -26,71 +29,436 @@
         </div>
       </div>
       <div id="display">
-          <div id="feed" v-bind:class="{selected: page==='feed'}" v-on:scroll="scroll('check')">
-            <div v-for="article in news" id="feedElem" v-bind:class="{extended: article.extended}" v-cloak>
-              <div id="articleImage">
-                <a v-bind:href="article.link" target="_blank">
-                    <img v-bind:src="article.imageL?article.imageL:article.profile?article.profile:'https://icon-icons.com/icons2/285/PNG/256/social_rss_box_orange_256_30633.png'" alt="miniature" style="height:130px; max-height:130px;" class="noselect">
-                </a>
-                <div id="articleDate">{{article.dateL}}</div>
-                <div id="articleSource" v-bind:class="{extended: article.extended}">{{article.authorL}}</div>
-              </div>
-              <div id="articleColumn">
-                  <div id="articleAuthor">{{article.author || article.URL}}</div>
-                  <div id="articleTitle">{{article.title}}</div>
-                  <div v-if="!article['media:group'] || !article['media:group']['media:description'] || !article['media:group']['media:description']['#']" id="articleDescription" v-bind:class="{extended: article.extended}" v-html="article.description"></div>
-                  <div v-else id="youtubeDescription" >
-                      <div v-if="article['yt:videoid'] && article.extended" ><iframe width="560" height="315" v-bind:src="'https://www.youtube.com/embed/' + article['yt:videoid']['#']" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe></div>
-                      <div id="youtubeDesc" v-bind:class="{extended: article.extended}" v-html="article.textL"></div>
-                  </div>
-                  <div id="articleMore" class="noselect" v-on:click="extend(article.key)">...</div>
-              </div>
+        <div id="feed" v-bind:class="{selected: page==='feed'}" v-on:scroll="scroll('check')">
+          <div v-for="article in news" id="feedElem" v-bind:class="{extended: article.extended}" v-cloak>
+            <div id="articleImage">
+              <a v-bind:href="article.link" target="_blank">
+                <img v-bind:src="article.imageL?article.imageL:article.profile?article.profile:'https://icon-icons.com/icons2/285/PNG/256/social_rss_box_orange_256_30633.png'"
+                  alt="miniature" style="height:130px; max-height:130px;" class="noselect">
+              </a>
+              <div id="articleDate">{{article.dateL}}</div>
+              <div id="articleSource" v-bind:class="{extended: article.extended}">{{article.authorL}}</div>
             </div>
-          </div>
-          <div id="settings" v-bind:class="{selected: page==='settings'}">
-            <div id="closeSettings"><div id="cross" class="noselect" v-on:click="changePage()">X</div></div>
-            <div id="settingList">
-              <div id="settingTitle">Import OPML sources</div>
-              <div id="settingSquare">
-                  <input type="file" accept=".opml" @change="readSingleFile"/>
-              </div>
-              <div id="settingTitle">Save sources to OPML file</div>
-              <div id="settingSquare">
-                  <button v-on:click="saveOPML">Download</button>
-              </div>
-              <div id="settingTitle">Add source</div>
-              <input v-model="newRss.url" placeholder="rss url" style="width: 300px; margin-bottom: 5px;" />
-              <div id="settingSquare">
-                  <select size="1" v-model="newRss.selected">
-                      <option>New topic</option>
-                      <option v-for="topic in topics">{{topic.title}}</option>
-                  </select>
-                  <input v-model="newRss.newTopic" placeholder="topic" v-bind:disabled="newRss.selected!=='New topic'" />
-                  <button v-on:click="addRss">Add</button>
-              </div>
-              <div id="settingSquare" style="color:greenyellow">
-                {{newRss.message}}
-              </div>
-              <div id="settingTitle">Source list</div>
-              <div id="settingSquare">
-                Topic :
-                  <select size="1" v-model="sources.selected" style="width: 200px;">
-                      <option v-for="topic in topics">{{topic.title}}</option>
-                  </select>
-              </div>
-              <div id="sourceList">
-                <div v-if="!sources.selected" style="text-align: center; margin-top: 5px;">Select a topic</div>
-                <div id="sourceElem" v-for="source in sourcesTopicSelected">
-                  <div style="display: flex; flex: 1;">{{source.title}}</div>
-                  <div style="display: flex; flex: 1;">{{source.xmlUrl}}</div>
-                  <button v-on:click="removeRss(source.xmlUrl, sources.selected)">Remove</button>
+            <div id="articleColumn">
+              <div id="articleAuthor">{{article.author || article.URL}}</div>
+              <div id="articleTitle">{{article.title}}</div>
+              <div v-if="!article['media:group'] || !article['media:group']['media:description'] || !article['media:group']['media:description']['#']"
+                id="articleDescription" v-bind:class="{extended: article.extended}" v-html="article.description"></div>
+              <div v-else id="youtubeDescription">
+                <div v-if="article['yt:videoid'] && article.extended">
+                  <iframe width="560" height="315" v-bind:src="'https://www.youtube.com/embed/' + article['yt:videoid']['#']"
+                    frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
                 </div>
+                <div id="youtubeDesc" v-bind:class="{extended: article.extended}" v-html="article.textL"></div>
+              </div>
+              <div id="articleMore" class="noselect" v-on:click="extend(article.key)">...</div>
+            </div>
+          </div>
+        </div>
+        <div id="settings" v-bind:class="{selected: page==='settings'}">
+          <div id="closeSettings">
+            <div id="cross" class="noselect" v-on:click="changePage()">X</div>
+          </div>
+          <div id="settingList">
+            <div id="settingTitle">Import OPML sources</div>
+            <div id="settingSquare">
+              <input type="file" accept=".opml" @change="readSingleFile" />
+            </div>
+            <div id="settingTitle">Save sources to OPML file</div>
+            <div id="settingSquare">
+              <button v-on:click="saveOPML">Download</button>
+            </div>
+            <div id="settingTitle">Add source</div>
+            <input v-model="newRss.url" placeholder="rss url" style="width: 300px; margin-bottom: 5px;" />
+            <div id="settingSquare">
+              <select size="1" v-model="newRss.selected">
+                <option>New topic</option>
+                <option v-for="topic in topics">{{topic.title}}</option>
+              </select>
+              <input v-model="newRss.newTopic" placeholder="topic" v-bind:disabled="newRss.selected!=='New topic'" />
+              <button v-on:click="addRss">Add</button>
+            </div>
+            <div id="settingSquare" style="color:greenyellow">
+              {{newRss.message}}
+            </div>
+            <div id="settingTitle">Source list</div>
+            <div id="settingSquare">
+              Topic :
+              <select size="1" v-model="sources.selected" style="width: 200px;">
+                <option v-for="topic in topics">{{topic.title}}</option>
+              </select>
+            </div>
+            <div id="sourceList">
+              <div v-if="!sources.selected" style="text-align: center; margin-top: 5px;">Select a topic</div>
+              <div id="sourceElem" v-for="source in sourcesTopicSelected">
+                <div style="display: flex; flex: 1;">{{source.title}}</div>
+                <div style="display: flex; flex: 1;">{{source.xmlUrl}}</div>
+                <button v-on:click="removeRss(source.xmlUrl, sources.selected)">Remove</button>
               </div>
             </div>
           </div>
+        </div>
       </div>
     </div>
   </div>
-  <script src="script.js" type="text/javascript"></script>
+  <script type="text/javascript">
+    // I stole this function from here : https://davidwalsh.name/convert-xml-json
+    function xmlToJson(xml) {
+      var obj = {};
+      if (xml.nodeType == 1) {
+        if (xml.attributes.length > 0) {
+          for (var j = 0; j < xml.attributes.length; j++) {
+            var attribute = xml.attributes.item(j);
+            obj[attribute.nodeName] = attribute.nodeValue;
+          }
+        }
+      } else if (xml.nodeType == 3) {
+        obj = xml.nodeValue;
+      }
+      if (xml.hasChildNodes()) {
+        for (var i = 0; i < xml.childNodes.length; i++) {
+          var item = xml.childNodes.item(i);
+          var nodeName = item.nodeName;
+          if (typeof (obj[nodeName]) == "undefined" && xml.nodeName != "outline") {
+            obj[nodeName] = xmlToJson(item);
+          } else {
+            if (typeof (obj[nodeName]) == "undefined") {
+              obj[nodeName] = [];
+            }
+            if (typeof (obj[nodeName].push) == "undefined") {
+              var old = obj[nodeName];
+              obj[nodeName] = [];
+              obj[nodeName].push(old);
+            }
+            obj[nodeName].push(xmlToJson(item));
+          }
+        }
+      }
+      return obj;
+    };
+
+    // And that one from there : https://www.sitepoint.com/community/t/convert-plain-text-to-html-with-javascript/271421
+    function textToHtml(text_input) {
+      var output_html = ""
+      output_html += "<p>"; //begin by creating paragraph
+      for (counter = 0; counter < text_input.length; counter++) {
+        switch (text_input[counter]) {
+          case '\n':
+            if (text_input[counter + 1] === '\n') {
+              output_html += "</p>\n<p>";
+              counter++;
+            }
+            else output_html += "<br>";
+            break;
+          case ' ':
+            if (text_input[counter - 1] != ' ' && text_input[counter - 1] != '\t')
+              output_html += " ";
+            break;
+          case '\t':
+            if (text_input[counter - 1] != '\t')
+              output_html += " ";
+            break;
+          case '&':
+            output_html += "&amp;";
+            break;
+          case '"':
+            output_html += "&quot;";
+            break;
+          case '>':
+            output_html += "&gt;";
+            break;
+          case '<':
+            output_html += "&lt;";
+            break;
+          default:
+            output_html += text_input[counter];
+        }
+      }
+      output_html += "</p>"; //finally close paragraph
+      return output_html
+    }
+
+    function feedToOpml(feed) {
+      var text = "";
+      text += '<?xml version="1.0" encoding="UTF-8"?>\n'
+      text += '<opml version="1.1">\n'
+      text += '\t<head>\n\t\t<title>\n\t\t\tSoRSSery\n\t\t</title>\n\t</head>\n\t<body>\n'
+      for (elem of feed) {
+        text += '\t\t<outline title="' + elem.title + '" text="' + elem.title + '">\n'
+        for (flux of elem.outline) {
+          text += '\t\t\t<outline title="' + flux.title + '" text="' + flux.title + '" type="rss" xmlUrl="' + flux.xmlUrl + '"/>\n'
+        }
+        text += '\t\t</outline>\n'
+      }
+      text += '\t</body>\n</opml>\n'
+      saveData(text, "sorssery.opml")
+    }
+
+    var saveData = (function () {
+      var a = document.createElement("a");
+      document.body.appendChild(a);
+      a.style = "display: none";
+      return function (data, fileName) {
+        blob = new Blob([data], { type: "text/plain;charset=utf-8" }),
+          url = window.URL.createObjectURL(blob);
+        a.href = url;
+        a.download = fileName;
+        a.click();
+        window.URL.revokeObjectURL(url);
+      };
+    }());
+
+    var app = new Vue({
+      el: "#app",
+      data: {
+        page: "feed",
+        topics: [],
+        selectedTopic: null,
+        feed: [],
+        slice: 15,
+        extended: [],
+        newRss: {
+          url: "",
+          selected: "New topic",
+          newTopic: "",
+          message: ""
+        },
+        sources: {
+          selected: null
+        }
+      },
+      computed: {
+        sourcesTopicSelected: function () {
+          if (this.sources.selected && this.topics.find(function (elem) {
+            return elem.title === this.selected
+          }, this.sources)) {
+            var ret = this.topics[this.topics.findIndex(function (elem) {
+              return elem.title === this.selected
+            }, this.sources)].outline
+            return ret
+          }
+          return []
+        },
+        news: function () {
+          if (this.topics[this.selectedTopic] === undefined) {
+            return []
+          }
+          return this.feed.filter(function (elem) {
+            return elem.topic === this.title
+          }, this.topics[this.selectedTopic]).map((article) => {
+            return {
+              ...article.data,
+              imageL: article.data.image.url ? article.data.image.url : article.data.enclosures.length > 0 ? article.data.enclosures[0].url : null,
+              dateL: moment(article.data.pubdate).fromNow(),
+              URL: article.url,
+              extended: this.extended.indexOf(article.id) >= 0 ? true : false,
+              key: article.id,
+              textL: (!article.data['media:group'] || !article.data['media:group']['media:description'] || !article.data['media:group']['media:description']['#']) ? "" : textToHtml(article.data['media:group']['media:description']['#']),
+              author: article.data.author ? article.data.author : article.title,
+              authorL: article.title,
+              profile: article.profile
+            }
+          }).sort((a, b) => new Date(b.pubdate) - new Date(a.pubdate)).slice(0, this.slice)
+        }
+      },
+      methods: {
+        lastUpdate: function (topic) {
+          if (!this.topics || this.topics === []) {
+            return null
+          }
+          var ret = this.feed.filter(function (elem) {
+            return elem.topic === this.title
+          }, this.topics[topic]).map((article) => {
+            return {
+              ...article.data,
+              dateL: moment(article.data.pubdate).fromNow()
+            }
+          }).sort((a, b) => new Date(b.pubdate) - new Date(a.pubdate)).slice(0, 1)
+          if (ret.length > 0) {
+            return ret[0].dateL
+          }
+          return null
+        },
+        removeRss: function (url, topicName) {
+          var topic = this.topics.findIndex(function (elem) {
+            return elem.title === this.topic
+          }, { topic: topicName })
+          var index = this.topics[topic].outline.findIndex(function (elem) {
+            return elem.xmlUrl === this.url
+          }, { url: url })
+          this.topics[topic].outline.splice(index, 1)
+          localStorage.setItem('topics', JSON.stringify(this.topics));
+        },
+        addRss: function () {
+          var topic = this.newRss.selected
+          if (this.newRss.selected === "New topic") {
+            topic = this.newRss.newTopic
+            if (!this.newRss.newTopic || this.newRss.newTopic === "") {
+              return this.newRss.message = "You need to provide a name for the new topic."
+            }
+            if (!this.topics.find(function (elem) {
+              return elem.title === this.newTopic
+            }, this.newRss)) {
+              this.topics.push({ title: this.newRss.newTopic, text: this.newRss.newTopic, outline: [] })
+            }
+          }
+          topic = this.topics.findIndex(function (elem) {
+            return elem.title === this.topic
+          }, { topic: topic })
+          if (!this.newRss.url || this.newRss.url === "") {
+            return this.newRss.message = "You need to provide a url."
+          }
+          if (this.topics[topic].outline.find(function (elem) {
+            return elem.xmlUrl === this.url
+          }, this.newRss)) {
+            return this.newRss.message = "The feed is already saved."
+          }
+          feednami.load(this.newRss.url, function (result) {
+            if (result.error) {
+              console.log(result.error);
+              console.log(this.newRss.url);
+              return this.newRss.message = "The provided url could not be fetched properly."
+            } else {
+              this.topics[topic].outline.push({ 'title': result.feed.meta.title, 'text': result.title, 'type': "rss", 'xmlUrl': this.newRss.url })
+              localStorage.setItem('topics', JSON.stringify(this.topics));
+              return this.newRss.message = "Added feed source : " + result.feed.meta.title
+            }
+          }.bind(this));
+        },
+        extend: function (key) {
+          var index = this.extended.indexOf(key)
+          if (index < 0) {
+            this.extended.push(key)
+          }
+          else {
+            this.extended.splice(index, 1)
+          }
+        },
+        scroll: function (key, screen) {
+          var elmnt = document.getElementById("feed");
+          if (screen) {
+            var elmnt = document.getElementById(screen);
+          }
+          switch (key) {
+            case 'up':
+              elmnt.scrollTop = elmnt.scrollTop - 40
+              return
+            case 'down':
+              elmnt.scrollTop = elmnt.scrollTop + 40
+              return
+            case 'pageup':
+              elmnt.scrollTop = elmnt.scrollTop - 1000
+              return
+            case 'pagedown':
+              elmnt.scrollTop = elmnt.scrollTop + 1000
+              return
+            case 'bottom':
+              elmnt.scrollTop = elmnt.scrollHeight
+              return
+            case 'top':
+              elmnt.scrollTop = 0
+              return
+            case 'check':
+              if (elmnt.scrollTop >= elmnt.scrollHeight - 1000 && this.slice < this.feed.filter(function (elem) {
+                return elem.topic === this.title
+              }, this.topics[this.selectedTopic]).length) {
+                this.slice = this.slice + 15
+              }
+              return
+            default:
+              break;
+          }
+        },
+        readSingleFile: function (e) {
+          var file = e.target.files[0];
+          if (!file) {
+            return;
+          }
+          var reader = new FileReader();
+          reader.onload = function (e) {
+            var contents = e.target.result;
+            parser = new DOMParser();
+            xmlDoc = parser.parseFromString(contents, "text/xml");
+            this.topics = xmlToJson(xmlDoc).opml.body.outline
+            localStorage.setItem('topics', JSON.stringify(this.topics));
+            this.prepareFeed()
+          }.bind(this);
+          reader.readAsText(file);
+        },
+        changePage: function (page) {
+          this.page = this.page === "feed" ? "settings" : "feed";
+        },
+        changeTopic: function (topic) {
+          var elmnt = document.getElementById("feed");
+          elmnt.scrollTop = 0
+          this.selectedTopic = topic;
+          this.slice = 15
+          this.extended = []
+        },
+        prepareFeed: function () {
+          if (!this.topics || !this.topics.length > 0) {
+            this.selectedTopic = null
+            this.feed = []
+            return
+          }
+          this.selectedTopic = 0
+        },
+        fetchFeed: function () {
+          for (var topic of this.topics) {
+            for (elem of topic.outline) {
+              this.fetchRss(elem.xmlUrl, elem.title, topic.title)
+            }
+          }
+        },
+        fetchRss: function (url, title, topic) {
+          var invocation = new XMLHttpRequest();
+
+          if (invocation) {
+            invocation.open('GET', url, true);
+            invocation.send();
+            if (invocation.status === 200) {
+              console.log("Réponse reçue: %s", invocation.responseText);
+            } else {
+              console.log("Status de la réponse: %d (%s)", invocation.status, invocation.statusText);
+            }
+          }
+          feednami.load(url, function (result) {
+            if (result.error) {
+              console.log(result.error);
+              console.log(url);
+            } else {
+              var entries = result.feed.entries;
+              for (var i = 0; i < entries.length; i++) {
+                var entry = entries[i];
+                this.test = entry.title;
+                if (!this.diff(entry.title, entry.url)) {
+                  this.feed.push({ id: this.feed.length, topic: topic, url: url, title: title, profile: result.feed.meta.image ? result.feed.meta.image.url : null, data: entry })
+                }
+              }
+            }
+          }.bind(this));
+        },
+        diff: function (title, url) {
+          for (elem of this.feed) {
+            if (elem.data.title === title && elem.data.url === url) {
+              return true
+            }
+          }
+          return false
+        },
+        saveOPML: function () {
+          return feedToOpml(this.topics)
+        }
+      },
+      mounted: function () {
+        this.topics = localStorage.topics ? JSON.parse(localStorage.topics) : []
+        this.prepareFeed()
+        this.fetchFeed()
+        this.scroll('top', 'settings')
+        this.scroll('top')
+      }
+    });
+  </script>
 </body>
+
 </html>
