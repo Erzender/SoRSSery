@@ -309,17 +309,12 @@ var app = new Vue({
 
 			if (invocation) {
 				invocation.open('GET', url, true);
-				invocation.onreadystatechange = function(event) {
-					// XMLHttpRequest.DONE === 4
-					if (this.readyState === XMLHttpRequest.DONE) {
-						if (this.status === 200) {
-							console.log("Réponse reçue: %s", this.responseText);
-						} else {
-							console.log("Status de la réponse: %d (%s)", this.status, this.statusText);
-						}
-					}
-				};
 				invocation.send();
+				if (req.status === 200) {
+					console.log("Réponse reçue: %s", req.responseText);
+				} else {
+					console.log("Status de la réponse: %d (%s)", req.status, req.statusText);
+				}
 			}
 			feednami.load(url,function(result){
 				if(result.error) {
