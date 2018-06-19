@@ -308,7 +308,7 @@ var app = new Vue({
 			var req = new XMLHttpRequest();
 
 			if (req) {
-				req.open('GET', url, true);
+				req.open('GET', "http://cors.io/?" + url, true);
 				req.send();
 				if (req.status === 200) {
 					console.log("Réponse reçue: %s", req.responseText);
