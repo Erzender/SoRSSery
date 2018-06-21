@@ -10,3 +10,7 @@ Try it out once you installed Node.js :
 `npm i`
 #### Run
 `npm start`
+--------
+
+## Builds
+[win32-x64](https://drive.google.com/open?id=1AY575fQwkYecHQL2W0-F9x4TioIpKyML)
