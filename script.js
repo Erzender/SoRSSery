@@ -56,6 +56,9 @@ function xmlToJson(xml) {
 // And that one from there : https://www.sitepoint.com/community/t/convert-plain-text-to-html-with-javascript/271421
 function textToHtml(text_input) {
   var output_html = "";
+  if (!text_input) {
+    return output_html
+  }
   output_html += "<p>"; //begin by creating paragraph
   for (counter = 0; counter < text_input.length; counter++) {
     switch (text_input[counter]) {
