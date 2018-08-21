@@ -5,7 +5,8 @@
 SoRSSery is a Desktop RSS reader prototype that is better than the usual ones because I created it.
 
 --------
-Try it out once you installed Node.js :
+## Run in developement mode
+[Node.js](https://nodejs.org/en/) and [Electron](https://electronjs.org/) are needed.
 #### Install dependencies
 `npm i`
 #### Run
@@ -14,4 +15,4 @@ Try it out once you installed Node.js :
 --------
 
 ## Builds
-[win32-x64](https://drive.google.com/open?id=1AY575fQwkYecHQL2W0-F9x4TioIpKyML)
+[win32-x64 (Windows)](https://drive.google.com/open?id=1AY575fQwkYecHQL2W0-F9x4TioIpKyML)
